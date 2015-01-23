@@ -14,5 +14,8 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Burstaholic/jbase-session/issues"
+  },
+  "dependencies": {
+    "jbase": "~1.2.1"
   }
 }
