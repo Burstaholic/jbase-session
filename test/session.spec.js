@@ -70,6 +70,76 @@ describe('The session handler:', function()
                     done();
                 });
         });
+
+        it('updates creation time on touch', function(done)
+        {
+            setTimeout(function()
+            {
+                var original = store.Session.filter({sessionID: '123'})
+                    .get(0)
+                    .then(function(r)
+                    {
+                        return r.created;
+                    });
+
+                original.then(function()
+                {
+                    store.touch('123', {cookie: {maxAge: 2000, name: 'Bob'}})
+                        .then(function()
+                        {
+                            return store.Session.filter({sessionID: '123'})
+                        })
+                        .get(0)
+                        .then(function(r)
+                        {
+                            if(r.created > original.value())
+                            {
+                                done();
+                            }
+                            else
+                            {
+                                done(new Error('Session age not updated!'));
+                            }
+                        })
+                })
+            }, 5);
+        });
+
+        it('gets the length of the session list', function(done)
+        {
+            store.length()
+                .then(function(r)
+                {
+                    if(r == 1)
+                    {
+                        done();
+                    }
+                    else
+                    {
+                        done(new Error("Wrong session list length received!"));
+                    }
+                });
+        });
+
+        it('clears all sessions', function(done)
+        {
+            store.clear()
+                .then(function()
+                {
+                    return store.length();
+                })
+                .then(function(r)
+                {
+                    if(r == 0)
+                    {
+                        done();
+                    }
+                    else
+                    {
+                        done(new Error("Sessions not cleared!"));
+                    }
+                })
+        })
     });
 
     it('does not retrieve an expired session', function(done)
