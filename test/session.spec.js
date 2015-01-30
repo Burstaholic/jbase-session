@@ -7,11 +7,10 @@
 var assert = require("assert");
 var exSession = require('express-session');
 var jsession = require('../lib/jbase-session')(exSession);
-var Promise = require('bluebird');
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-describe('Test session handling', function()
+describe('The session handler:', function()
 {
     var store;
 
@@ -66,7 +65,7 @@ describe('Test session handling', function()
                 {
                     done(new Error("Session not destroyed!"));
                 })
-                .error(function(e)
+                .error(function()
                 {
                     done();
                 });
@@ -75,7 +74,6 @@ describe('Test session handling', function()
 
     it('does not retrieve an expired session', function(done)
     {
-        var self = this;
         store.set('123', {cookie: {maxAge: 1, name: 'Bob'}});
 
         setTimeout(function(id)
@@ -85,7 +83,7 @@ describe('Test session handling', function()
                 {
                     done(new Error("Session not destroyed!"));
                 })
-                .error(function(e)
+                .error(function()
                 {
                     done();
                 });
