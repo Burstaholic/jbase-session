@@ -18,7 +18,6 @@ describe('Test session handling', function()
     beforeEach(function()
     {
         store = new jsession({writeToDisk: false, loadFromDisk: false});
-        Promise.promisifyAll(store);
     });
 
     describe('Creation test',
@@ -26,13 +25,13 @@ describe('Test session handling', function()
         {
             it('stores and retrieves session', function(done)
             {
-                store.setAsync('123', {cookie: {maxAge: 2000, name: 'Bob'}})
-                    .then(function(s)
+                store.set('123', {cookie: {maxAge: 2000, name: 'Bob'}})
+                    .then(function()
                     {
-                        return store.getAsync('123')
+                        return store.get('123')
                             .then(function(result)
                             {
-                                assert.deepEqual(s.data, result);
+                                assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
                             });
                     })
                     .then(done, done);
@@ -48,7 +47,7 @@ describe('Test session handling', function()
 
         it('retrieves a stored session', function(done)
         {
-            store.getAsync('123')
+            store.get('123')
                 .then(function(result)
                 {
                     assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
