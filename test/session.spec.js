@@ -72,6 +72,25 @@ describe('Test session handling', function()
                 });
         });
     });
+
+    it('does not retrieve an expired session', function(done)
+    {
+        var self = this;
+        store.set('123', {cookie: {maxAge: 1, name: 'Bob'}});
+
+        setTimeout(function(id)
+        {
+            store.get.apply(store, [id])
+                .then(function()
+                {
+                    done(new Error("Session not destroyed!"));
+                })
+                .error(function(e)
+                {
+                    done();
+                });
+        }, 1001, '123');
+    });
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
