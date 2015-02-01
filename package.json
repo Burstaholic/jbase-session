@@ -1,6 +1,6 @@
 {
   "name": "jbase-session",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "JBase-backed session store for Express and Connect",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,6 @@
     "url": "https://github.com/Burstaholic/jbase-session/issues"
   },
   "dependencies": {
-    "bluebird": "^2.9.3",
     "jbase": "~1.2.1"
   },
   "devDependencies": {

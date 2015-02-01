@@ -61,12 +61,12 @@ describe('The session handler:', function()
                 {
                     return store.get('123');
                 })
-                .then(function()
+                .then(function(r)
                 {
-                    done(new Error("Session not destroyed!"));
-                })
-                .error(function()
-                {
+                    if(r)
+                    {
+                        done(new Error("Session not destroyed!"));
+                    }
                     done();
                 });
         });
@@ -149,12 +149,13 @@ describe('The session handler:', function()
         setTimeout(function(id)
         {
             store.get.apply(store, [id])
-                .then(function()
+                .then(function(r)
                 {
-                    done(new Error("Session not destroyed!"));
-                })
-                .error(function()
-                {
+                    if(r)
+                    {
+                        done(new Error("Session not destroyed!"));
+                    }
+
                     done();
                 });
         }, 1001, '123');
