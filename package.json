@@ -1,6 +1,6 @@
 {
   "name": "trivialdb-session",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "TrivialDB-backed session store for Express and Connect",
   "main": "index.js",
   "scripts": {
