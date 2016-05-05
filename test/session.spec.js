@@ -7,7 +7,6 @@
 var assert = require("assert");
 var exSession = require('express-session');
 var tsession = require('../lib/trivialdb-session')(exSession);
-var Promise = require('bluebird');
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -25,71 +24,58 @@ describe('Test session handling', function()
         {
             it('stores and retrieves session', function(done)
             {
-                store.set('123', {cookie: {maxAge: 2000, name: 'Bob'}})
-                    .then(function()
+                store.set('123', {cookie: {maxAge: 2000, name: 'Bob'}}, function()
+                {
+                    store.get('123', function(error, result)
                     {
-                        return store.get('123')
-                            .then(function(result)
-                            {
-                                assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
-                            });
-                    })
-                    .then(done, done);
+                        assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
+                        done();
+                    });
+                });
             })
         });
 
     describe('Operation tests', function()
     {
-        beforeEach(function()
+        beforeEach(function(done)
         {
-            store.set('123', {cookie: {maxAge: 2000, name: 'Bob'}});
+            store.set('123', {cookie: {maxAge: 2000, name: 'Bob'}}, done);
         });
 
-        it('retrieves a stored session', function(done)
+        it('retrieves a stored session', function()
         {
-            store.get('123')
-                .then(function(result)
-                {
-                    assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
-                })
-                .then(done, done);
+            store.get('123', function(error, result)
+            {
+                assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
+            });
         });
 
         it('destroys a stored session', function(done)
         {
-            store.destroy('123')
-                .then(function()
+            store.destroy('123', function()
+            {
+                store.get('123', function(error, result)
                 {
-                    return store.get('123');
-                })
-                .then(function()
-                {
-                    done(new Error("Session not destroyed!"));
-                })
-                .error(function(e)
-                {
+                    assert.strictEqual(result, undefined, "Session not destroyed!");
                     done();
                 });
+            });
         });
     });
 
     it('does not retrieve an expired session', function(done)
     {
-        var self = this;
-        store.set('123', {cookie: {maxAge: 1, name: 'Bob'}});
-
-        setTimeout(function(id)
+        store.set('123', {cookie: {maxAge: 1, name: 'Bob'}}, function()
         {
-            store.get.apply(store, [id])
-                .then(function()
+            setTimeout(function()
+            {
+                store.get('123', function(error, result)
                 {
-                    done(new Error("Session not destroyed!"));
-                })
-                .error(function(e)
-                {
+                    assert.strictEqual(result, undefined, "Session not destroyed!");
                     done();
                 });
-        }, 1001, '123');
+            }, 1001);
+        });
     });
 });
 
