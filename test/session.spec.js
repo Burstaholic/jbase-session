@@ -4,15 +4,15 @@
 // @module session.spec
 // ---------------------------------------------------------------------------------------------------------------------
 
-var assert = require("assert");
-var exSession = require('express-session');
-var tsession = require('../lib/trivialdb-session')(exSession);
+const assert = require("assert");
+const exSession = require('express-session');
+const tsession = require('../lib/trivialdb-session')(exSession);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 describe('Test session handling', function()
 {
-    var store;
+    let store;
 
     beforeEach(function()
     {
@@ -61,6 +61,32 @@ describe('Test session handling', function()
                 });
             });
         });
+    });
+
+    describe('Namespace tests', function()
+    {
+        beforeEach(function()
+        {
+            store = new tsession({namespace: 'foobar', writeToDisk: false, loadFromDisk: false});
+        });
+
+        it('sets the namespace correctly', function(done)
+        {
+            assert(store.SessionDB._namespace.name === 'foobar', 'Namespace not set correctly.');
+            done();
+        });
+
+        it('stores and retrieves session', function(done)
+        {
+            store.set('123', {cookie: {maxAge: 2000, name: 'Bob'}}, function()
+            {
+                store.get('123', function(error, result)
+                {
+                    assert.deepEqual({cookie: {maxAge: 2000, name: 'Bob'}}, result);
+                    done();
+                });
+            });
+        })
     });
 
     it('does not retrieve an expired session', function(done)
